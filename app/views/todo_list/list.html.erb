@@ -1,1 +1,36 @@
-<h1>The todos will be listed here</h1>
+<div style="width: 400px; margin: auto;">
+	<h1>Todo list</h1>
+	
+	<a id="edit_link" onclick="start_editing()" >
+		Edit<br/>
+		(shift + e)
+	</a>
+	
+	<div id="todo_items_container">
+		<ul id="todo_items">
+			<li class="todo_item">A thing to be done by <span style="font-weight: bold;">Antti</span> on <span style="color: green;">5.3.2012</span></li>
+			<li class="todo_item">Another thing to be done by <span style="font-weight: bold;">Antti</span> on <span style="color: green;">7.3.2012</span></li>
+		</ul>
+	</div>
+</div>
+
+<script>
+	function start_editing() {
+		row = "<li class='row_in_edit'>\
+		<input class='task_row_input' type='text' >\
+		</li>"
+		
+		$('.todo_item').last().after(row);
+		$('.task_row_input').first().focus();
+	}
+	
+	function capture_keypress() {
+		if (window.event.shiftKey) {
+			switch (window.event.keyCode) {
+				case 69: start_editing(); break;
+			}
+		}
+		
+		
+	}
+</script>

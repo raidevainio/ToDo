@@ -5,3 +5,41 @@
  *= require_self
  *= require_tree . 
 */
+
+#edit_link {
+	color: white;
+	background: green;
+	cursor: pointer;
+	
+	-moz-border-radius: 150px;
+	-webkit-border-radius: 150px;
+	
+	width: 75px;
+	height: 60px;
+	
+	float: right;
+	
+	text-align: center;
+	padding-top: 15px;
+	
+	margin-bottom: 70px;
+	
+}
+#edit_link:hover {
+	color: black;
+}
+
+#todo_items_container {
+	float: left;
+	width: 400px;
+}
+
+#todo_items_container ul {
+	list-style: none;
+	margin-left: 0px;
+	padding-left: 0px;
+}
+
+.todo_row_input {
+	border: 0px;
+}
