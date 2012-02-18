@@ -1,36 +1,86 @@
 <div id="page">
 	<h1>Project name</h1>
 	
-	<textarea id="t_area" rows="40"></textarea>
-	<input type="text" id="hidden_input">	
+	<div id="input_area">
+		<textarea id="t_area"></textarea>
+		<input type="text" id="hidden_input">		
+	</div>
+		
+	<div id="show_area">
+		
+	</div>
 </div>
 
 
 
 
 <script>
+	var c=0;
+	var t;
+	var timer_is_on=0;
+	
+	function timedCount() {
+		parseHTML();
+		setTimeout("timedCount()", 250);
+	}
+	
+	function doTimer() {
+		if (!timer_is_on) {
+	  		timer_is_on=1;
+	  		timedCount();
+	  	}
+	}
+	
+	doTimer();
 	
 	$('#hidden_input').focusin(function() {
 		$('#t_area').focus();
-		$('#t_area').append('[]');
+		$('#t_area').val($('#t_area').val()+"\t[]");
 	});
 	
-	function setSelectionRange(input, selectionStart, selectionEnd) {
-  		if (input.setSelectionRange) {
-    		input.focus();
-    		input.setSelectionRange(selectionStart, selectionEnd);
-  		}
-	  	else if (input.createTextRange) {
-	    	var range = input.createTextRange();
-		    range.collapse(true);
-		    range.moveEnd('character', selectionEnd);
-		    range.moveStart('character', selectionStart);
-		    range.select();
-  		}
+	function parseHTML() {
+		text = $('#t_area').val();
+		lines = text.split("\n");
+		html = "";
+		create_ul = false;
+		
+		$.each(lines, function(index, line) {
+			if (line.substr(0, 2) == "* ") {
+				create_ul = true;
+				
+				task = "";
+				employee = "";
+				deadline = "";
+				
+				first_osb = line.indexOf("["); //first opening square bracket
+				first_csb =	line.indexOf("]"); //first closing square bracket
+				last_osb = line.lastIndexOf("[");
+				last_csb = line.lastIndexOf("]");
+				
+				if (first_osb == -1) {
+					task = line.substr(2, line.lenght);
+				} else {
+					task = line.substr(2, (first_osb - 3));
+				}
+				
+				employee = line.substr((first_osb+1), (first_csb - first_osb - 1));
+				
+				if (!(first_osb == last_osb) && !(first_csb == last_csb)) {
+					deadline = line.substr((last_osb+1), (last_csb - last_osb - 1));
+				} else {
+					deadline = "";
+				}
+				
+				
+				html += ("<li>"+task+" <span class='employee'>"+employee+"</span> <span class='deadline'>"+deadline+"</span></li>");
+			}
+		});
+		
+		if (create_ul) {
+			html = "<ul>" + html + "</ul>"
+		}
+		
+		$('#show_area').html(html);
+		
 	}
-
-	function setCaretToPos (input, pos) {
-  		setSelectionRange(input, pos, pos);
-	}
-	
 </script>

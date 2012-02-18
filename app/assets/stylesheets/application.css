@@ -7,11 +7,15 @@
 */
 
 #page {
-	width: 600px;
-	height: 1000px;
+	width: 800px;
+	height: 600px;
 	border: solid 1px black;
 	margin:auto;
 	
+}
+
+#page h1 {
+	text-align: center;
 }
 
 #hidden_input {
@@ -20,8 +24,25 @@
 }
 
 textarea {
-	width: 580px;
+	width: 780px;
+	height: 200px;
 	margin:auto;
 	
 	display: block;
+}
+
+#show_area {
+	border: solid 1px black;
+	
+	width: 780px;
+	height: 200px;
+	margin:auto;
+}
+
+.employee {
+	font-weight: bold;
+}
+
+.deadline {
+	font-style: italic;
 }
