@@ -1,36 +1,36 @@
-<div style="width: 400px; margin: auto;">
-	<h1>Todo list</h1>
+<div id="page">
+	<h1>Project name</h1>
 	
-	<a id="edit_link" onclick="start_editing()" >
-		Edit<br/>
-		(shift + e)
-	</a>
-	
-	<div id="todo_items_container">
-		<ul id="todo_items">
-			<li class="todo_item">A thing to be done by <span style="font-weight: bold;">Antti</span> on <span style="color: green;">5.3.2012</span></li>
-			<li class="todo_item">Another thing to be done by <span style="font-weight: bold;">Antti</span> on <span style="color: green;">7.3.2012</span></li>
-		</ul>
-	</div>
+	<textarea id="t_area" rows="40"></textarea>
+	<input type="text" id="hidden_input">	
 </div>
 
+
+
+
 <script>
-	function start_editing() {
-		row = "<li class='row_in_edit'>\
-		<input class='task_row_input' type='text' >\
-		</li>"
-		
-		$('.todo_item').last().after(row);
-		$('.task_row_input').first().focus();
+	
+	$('#hidden_input').focusin(function() {
+		$('#t_area').focus();
+		$('#t_area').append('[]');
+	});
+	
+	function setSelectionRange(input, selectionStart, selectionEnd) {
+  		if (input.setSelectionRange) {
+    		input.focus();
+    		input.setSelectionRange(selectionStart, selectionEnd);
+  		}
+	  	else if (input.createTextRange) {
+	    	var range = input.createTextRange();
+		    range.collapse(true);
+		    range.moveEnd('character', selectionEnd);
+		    range.moveStart('character', selectionStart);
+		    range.select();
+  		}
+	}
+
+	function setCaretToPos (input, pos) {
+  		setSelectionRange(input, pos, pos);
 	}
 	
-	function capture_keypress() {
-		if (window.event.shiftKey) {
-			switch (window.event.keyCode) {
-				case 69: start_editing(); break;
-			}
-		}
-		
-		
-	}
 </script>
