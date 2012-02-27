@@ -2,7 +2,7 @@
 	<h1>Project name</h1>
 	
 	<div id="input_area">
-		<textarea id="t_area"></textarea>
+		<textarea id="t_area" onkeyup="check_enter()">* </textarea>
 		<input type="text" id="hidden_input">		
 	</div>
 		
@@ -12,12 +12,15 @@
 </div>
 
 
-
-
 <script>
-	var c=0;
-	var t;
-	var timer_is_on=0;
+	
+	function check_enter() {
+		if (window.event.which == 13) {
+			$('#t_area').val($('#t_area').val()+"* ");
+		}
+	}
+
+	var timer_is_on = false;
 	
 	function timedCount() {
 		parseHTML();
@@ -26,7 +29,7 @@
 	
 	function doTimer() {
 		if (!timer_is_on) {
-	  		timer_is_on=1;
+	  		timer_is_on = true;
 	  		timedCount();
 	  	}
 	}
@@ -35,8 +38,58 @@
 	
 	$('#hidden_input').focusin(function() {
 		$('#t_area').focus();
-		$('#t_area').val($('#t_area').val()+"\t[]");
+		line = findFocusedLine();
+		addBracketsToLine(line);
+		setCursorInsideBrackets(line);
 	});
+	
+	function setCursorInsideBrackets(line) {
+		text = $('#t_area').val();
+		lines = text.split("\n");
+		pos = 0;
+		
+		for (i=0;i<line;i++) {			
+			text = text.replace("\n", "n");
+		}
+		
+		pos = text.lastIndexOf("[")+1;
+		
+		setCursorPosition(document.getElementById('t_area'), pos);
+	}
+	
+	function addBracketsToLine(line) {
+		text = $('#t_area').val();
+		lines = text.split("\n");
+		
+		lines[line] = lines[line]+"\t[]";
+		text = lines.join("\n");
+		
+		$('#t_area').val(text);
+	}
+	
+	function findFocusedLine() {
+		text = $('#t_area').val();
+		var line = 0;
+		var cursor_position = getCursorPosition(document.getElementById("t_area"));
+		lines = text.split("\n");
+		
+		for (i=0;i<lines.length;i++) {
+			line_end = text.indexOf("\n");
+			
+			if (line_end == -1) {
+				break;
+			}
+			
+			if (line_end < cursor_position) {
+				text = text.replace("\n", "n");
+				line++;
+			} else {
+				break;
+			}
+		}
+		
+		return (line);	
+	}
 	
 	function parseHTML() {
 		text = $('#t_area').val();
@@ -82,5 +135,34 @@
 		
 		$('#show_area').html(html);
 		
+	}
+	
+	//A code snippet from internet so it's not done by me - Teemu
+	function getCursorPosition (ctrl) {
+		var CaretPos = 0;	// IE Support
+		if (document.selection) {
+			ctrl.focus ();
+			var Sel = document.selection.createRange ();
+			Sel.moveStart ('character', -ctrl.value.length);
+			CaretPos = Sel.text.length;
+		}
+		// Firefox support
+		else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+			CaretPos = ctrl.selectionStart;
+		return (CaretPos);
+	}
+	
+	function setCursorPosition(ctrl, pos){
+		if(ctrl.setSelectionRange) {
+			ctrl.focus();
+			ctrl.setSelectionRange(pos,pos);
+		}
+		else if (ctrl.createTextRange) {
+			var range = ctrl.createTextRange();
+			range.collapse(true);
+			range.moveEnd('character', pos);
+			range.moveStart('character', pos);
+			range.select();
+		}
 	}
 </script>
