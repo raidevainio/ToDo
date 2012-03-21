@@ -8,167 +8,50 @@
 			<input type="text" size="7" class="deadline area" />
 		</div>
 	</div>
+	
+	<input type="text" id="hidden_input" />
 </div>
 
 
 
 <script>
 	
-	$(".task").first().autoResize({
-
+	$(".task").first().focus();
+	
+	$(".deadline").keypress(function() {
+		add_new_line();
 	});
 	
-	function check_enter() {
-		if (window.event.which == 13) {
-			$('#t_area').val($('#t_area').val()+"* ");
-		}
-	}
-
-	var timer_is_on = false;
-	
-	function timedCount() {
-		parseHTML();
-		setTimeout("timedCount()", 250);
-	}
-	
-	function doTimer() {
-		if (!timer_is_on) {
-	  		timer_is_on = true;
-	  		timedCount();
-	  	}
-	}
-	
-	doTimer();
-	
-	$('#hidden_input').focusin(function() {
-		$('#t_area').focus();
-		line = findFocusedLine();
-		addBracketsToLine(line);
-		setCursorInsideBrackets(line);
-	});
-	
-	function setCursorInsideBrackets(line) {
-		text = $('#t_area').val();
-		lines = text.split("\n");
-		pos = 0;
+	function add_new_line() {
+		$("#inputs_area").append('<div class="inputs_row">\
+			<input type="text" class="task area" />\
+			<input type="text" size="10" class="employee area" />\
+			<input type="text" size="7" class="deadline area" />\
+		</div>');
 		
-		for (i=0;i<line;i++) {			
-			text = text.replace("\n", "n");
-		}
-		
-		pos = text.lastIndexOf("[")+1;
-		
-		setCursorPosition(document.getElementById('t_area'), pos);
-	}
-	
-	function addBracketsToLine(line) {
-		text = $('#t_area').val();
-		lines = text.split("\n");
-		
-		lines[line] = lines[line]+"\t[]";
-		text = lines.join("\n");
-		
-		$('#t_area').val(text);
-	}
-	
-	function findFocusedLine() {
-		text = $('#t_area').val();
-		var line = 0;
-		var cursor_position = getCursorPosition(document.getElementById("t_area"));
-		lines = text.split("\n");
-		
-		for (i=0;i<lines.length;i++) {
-			line_end = text.indexOf("\n");
-			
-			if (line_end == -1) {
-				break;
-			}
-			
-			if (line_end < cursor_position) {
-				text = text.replace("\n", "n");
-				line++;
-			} else {
-				break;
-			}
-		}
-		
-		return (line);	
-	}
-	
-	function parseHTML() {
-		text = $('#t_area').val();
-		lines = text.split("\n");
-		html = "";
-		create_ul = false;
-		
-		$.each(lines, function(index, line) {
-			if (line.substr(0, 2) == "* ") {
-				create_ul = true;
-				
-				task = "";
-				employee = "";
-				deadline = "";
-				
-				first_osb = line.indexOf("["); //first opening square bracket
-				first_csb =	line.indexOf("]"); //first closing square bracket
-				last_osb = line.lastIndexOf("[");
-				last_csb = line.lastIndexOf("]");
-				
-				if (first_osb == -1) {
-					task = line.substr(2, line.lenght);
-				} else {
-					task = line.substr(2, (first_osb - 3));
-				}
-				
-				employee = line.substr((first_osb+1), (first_csb - first_osb - 1));
-				
-				if (!(first_osb == last_osb) && !(first_csb == last_csb)) {
-					deadline = line.substr((last_osb+1), (last_csb - last_osb - 1));
-				} else {
-					deadline = "";
-				}
-				
-				
-				html += ("<li>"+task+" <span class='employee'>"+employee+"</span> <span class='deadline'>"+deadline+"</span></li>");
-			}
+		$(".task").autoResize({
+			maxWidth: 798
 		});
 		
-		if (create_ul) {
-			html = "<ul>" + html + "</ul>"
-		}
+		$(".deadline").datepicker();
 		
-		$('#show_area').html(html);
+		$(".deadline").keypress(function() {
+			add_new_line();
+		});
 		
 	}
 	
-	//A code snippet from internet so it's not done by me - Teemu
-	function getCursorPosition (ctrl) {
-		var CaretPos = 0;	// IE Support
-		if (document.selection) {
-			ctrl.focus ();
-			var Sel = document.selection.createRange ();
-			Sel.moveStart ('character', -ctrl.value.length);
-			CaretPos = Sel.text.length;
-		}
-		// Firefox support
-		else if (ctrl.selectionStart || ctrl.selectionStart == '0')
-			CaretPos = ctrl.selectionStart;
-		return (CaretPos);
-	}
+	$(".task").autoResize({
+		maxWidth: 798
+	});
 	
-	function setCursorPosition(ctrl, pos){
-		if(ctrl.setSelectionRange) {
-			ctrl.focus();
-			ctrl.setSelectionRange(pos,pos);
-		}
-		else if (ctrl.createTextRange) {
-			var range = ctrl.createTextRange();
-			range.collapse(true);
-			range.moveEnd('character', pos);
-			range.moveStart('character', pos);
-			range.select();
-		}
-	}
+	$(".deadline").datepicker();
+	
+	$("#hidden_input").focusin(function() {
+		alert("Hidden hit!");
+		$(".task").first().focus();
+	});
+	
 </script>
 
 <style>
@@ -182,7 +65,7 @@ input:focus {
 }
 
 .area {
-	border: 1px solid black;
+	border: 0px;
 	padding: 0px;
 	margin: 0px;
 	margin-bottom: 3px;
@@ -207,22 +90,6 @@ input:focus {
 
 #inputs_area {
 	border: 1px solid black;
-}
-
-textarea {
-	width: 780px;
-	height: 200px;
-	margin:auto;
-	
-	display: block;
-}
-
-#show_area {
-	border: solid 1px black;
-	
-	width: 780px;
-	height: 200px;
-	margin:auto;
 }
 
 .employee {
