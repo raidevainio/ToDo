@@ -4,24 +4,19 @@
 	<div id="inputs_area">
 		<div class="inputs_row">
 			<input type="text" class="task area" />
-			
+			<input type="text" size="10" class="employee area" />
+			<input type="text" size="7" class="deadline area" />
 		</div>
-	</div>
-	
-	
-	<div id="input_area">
-		<textarea id="t_area" onkeyup="check_enter()">* </textarea>
-		<input type="text" id="hidden_input">		
-	</div>
-		
-	<div id="show_area">
-		
 	</div>
 </div>
 
 
 
 <script>
+	
+	$(".task").first().autoResize({
+
+	});
 	
 	function check_enter() {
 		if (window.event.which == 13) {
@@ -178,12 +173,16 @@
 
 <style>
 
+input:focus {
+	outline: none;
+}
+
 .task {
 	
 }
 
 .area {
-	border: 0px;
+	border: 1px solid black;
 	padding: 0px;
 	margin: 0px;
 	margin-bottom: 3px;
@@ -204,6 +203,10 @@
 #hidden_input {
 	background: white;
 	border: 0px;
+}
+
+#inputs_area {
+	border: 1px solid black;
 }
 
 textarea {
