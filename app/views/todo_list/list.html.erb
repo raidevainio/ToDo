@@ -1,22 +1,43 @@
 <div id="page">
 	<h1>Project name</h1>
-	
-	<div id="inputs_area" task_id="1">
-		<div class="inputs_row">
-			<input type="text" class="task area" />
-			<input type="text" size="10" class="employee area" />
-			<input type="text" size="7" class="deadline area" />
-		</div>
+	<div id="inputs_area">
+		
 	</div>
-	
 	<input type="text" id="hidden_input" />
-</div>
+	
+	<input type="button" value="Save" id="save_button" />
 
+</div>
 
 
 <script>
 
 	fetch_tasks();
+	
+	$('#save_button').click(function() {
+		
+		var tasks = {tasks: []};
+		
+		$('.inputs_row').each(function() {
+			task = {"id":$(this).attr('task_id'), "description":$(this).find('.task').val(), "employee": $(this).find('.employee').val(), "deadline":$(this).find('.deadline').val()}
+			tasks.tasks.push(task);
+		});
+		
+		$.ajax({
+        	url: '/save_tasks',
+          	type: "POST",
+          	data: {tasks:JSON.stringify(tasks)},
+          	dataType: "json",
+          	beforeSend: function(x) {
+            	if (x && x.overrideMimeType) {
+              		x.overrideMimeType("application/j-son;charset=UTF-8");
+            	}
+          	},
+          	success: function(result) {
+ 	     		
+          	}
+		});
+	});
 	
 	function fetch_tasks() {
 		var tasks;
