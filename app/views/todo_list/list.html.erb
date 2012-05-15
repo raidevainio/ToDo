@@ -1,7 +1,7 @@
 <div id="page">
 	<h1>Project name</h1>
 	
-	<div id="inputs_area">
+	<div id="inputs_area" task_id="1">
 		<div class="inputs_row">
 			<input type="text" class="task area" />
 			<input type="text" size="10" class="employee area" />
@@ -15,6 +15,54 @@
 
 
 <script>
+
+	fetch_tasks();
+	
+	function fetch_tasks() {
+		var tasks;
+		$.ajax({
+			url: "/fetch_tasks",
+			cache: false,
+			success: function(response_json) {
+				tasks = response_json;
+				
+				var area = $('#inputs_area');
+		
+				$.each(tasks, function() {
+				var date = new Date(this.deadline);
+				
+				html = '\
+				<div class="inputs_row" task_id=' + this.id + ' >\
+					<input type="text" class="task area" value= "' + this.description + '" />\
+					<input type="text" size="10" class="employee area" value= "' + this.employee + '" />\
+					<input type="text" size="7" class="deadline area" value= "' + formatDate(date) + '" />\
+				</div>\
+				';
+			
+				area.append(html);
+			
+				});
+				
+				$(".deadline").datepicker();
+			}
+		});
+		
+
+		
+	}
+	
+	function formatDate(value) {
+		var month = "";
+		
+		if ((value.getMonth()+1) < 10) {
+			month = "0" + (value.getMonth()+1);
+		} else { 
+			month = value.getMonth()+1;
+		}
+		
+		return  value.getDate() + "." + month + "." + value.getFullYear();
+	}
+	
 	
 	$(".task").first().focus();
 	
