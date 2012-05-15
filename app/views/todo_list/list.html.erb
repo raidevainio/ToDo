@@ -6,7 +6,6 @@
 	<input type="text" id="hidden_input" />
 	
 	<input type="button" value="Save" id="save_button" />
-
 </div>
 
 
@@ -65,6 +64,11 @@
 				});
 				
 				$(".deadline").datepicker();
+				$(".deadline").keypress(function(event) {
+  					if ( event.which == 13 ) {
+     					add_new_line($(event.target).parent().attr('task_id'));
+     				}
+     			});
 			}
 		});
 		
@@ -91,12 +95,23 @@
 		add_new_line();
 	});
 	
-	function add_new_line() {
-		$("#inputs_area").append('<div class="inputs_row">\
+	function add_new_line(id) {
+		
+		$(".inputs_row[task_id='" + id + "']").after('<div class="inputs_row" id=new_task>\
 			<input type="text" class="task area" />\
 			<input type="text" size="10" class="employee area" />\
 			<input type="text" size="7" class="deadline area" />\
 		</div>');
+		
+		$.ajax({
+        	url: '/fetch_new_task_id',
+        	cache: false,
+          	success: function(id) {
+          		$('#new_task').attr('task_id', id);
+          		$('#new_task').children().first().focus();
+ 	     		$('#new_task').removeAttr('id');
+          	}
+		});
 		
 		$(".task").autoResize({
 			maxWidth: 798
@@ -104,8 +119,10 @@
 		
 		$(".deadline").datepicker();
 		
-		$(".deadline").keypress(function() {
-			add_new_line();
+		$(".deadline").keypress(function(event) {
+			if ( event.which == 13 ) {
+				add_new_line($(event.target).parent().attr('task_id'));
+			}
 		});
 		
 	}
@@ -120,6 +137,13 @@
 		alert("Hidden hit!");
 		$(".task").first().focus();
 	});
+	
+	function fetch_new_task_id() {
+		
+		
+		
+		return new_id;
+	}
 	
 </script>
 

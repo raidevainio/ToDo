@@ -4,8 +4,7 @@ class TodoListController < ApplicationController
   end
 
   def fetch_tasks
-    tasks = Task.all
-    stringi = ""
+    tasks = Task.find_all_by_new_task(false)
     
     render :json => ActiveSupport::JSON.encode(tasks)
   end
@@ -18,10 +17,18 @@ class TodoListController < ApplicationController
       db_task.description = task["description"]
       db_task.employee = task["employee"]
       db_task.deadline = task["deadline"]
+      db_task.new_task = false
       db_task.save
     end
     
     render :text => "jeba"
   end
 
+  def fetch_new_task_id
+    task = Task.new
+    task.new_task = true
+    task.save
+    
+    render :text => task.id
+  end
 end

@@ -3,5 +3,6 @@ ToDo::Application.routes.draw do
   
   match "/fetch_tasks" => "todo_list#fetch_tasks"
   match "/save_tasks" => "todo_list#save_tasks"
+  match "/fetch_new_task_id" => "todo_list#fetch_new_task_id"
   
 end
