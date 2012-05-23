@@ -13,39 +13,75 @@
 
 	function read_keypress(event) {
 		switch (event.which) {
+			case 13: create_new_line(event); break;
+			case 37: move_caret_left(event); break;
 			case 38: move_caret_up(event); break;
+			case 39: move_caret_right(event); break;
 			case 40: move_caret_down(event); break;
 		}
 	}
 
 	fetch_tasks();
 	
-	
 	function move_caret_up (event) {
 		task_row = $(event.target).parent();
+		var caret_start = $(event.target).caret().start; 
 		
 		if ($(event.target).hasClass('task')) {
-			task_row.prev().children().first().focus();
+			var to = task_row.prev().children().first(); 
 		} else if ($(event.target).hasClass('employee')) {
-			task_row.prev().children().first().next().focus();
+			var to = task_row.prev().children().first().next();
 		} else if ($(event.target).hasClass('deadline')) {
-			task_row.prev().children().first().next().next().focus();
+			var to = task_row.prev().children().first().next().next();
 		}
-	
+		
+		to.focus();
+		
+		setTimeout(function() {
+			to.caret({start: caret_start, end: caret_start});
+		}, 5)
 	} 
 	
 	function move_caret_down (event) {
 		task_row = $(event.target).parent();
+		var caret_start = $(event.target).caret().start; 
 		
 		if ($(event.target).hasClass('task')) {
-			task_row.next().children().first().focus();
+			var to = task_row.next().children().first();
 		} else if ($(event.target).hasClass('employee')) {
-			task_row.next().children().first().next().focus();
+			var to = task_row.next().children().first().next();
 		} else if ($(event.target).hasClass('deadline')) {
-			task_row.next().children().first().next().next().focus();
+			var to = task_row.next().children().first().next().next();
 		}
+		
+		to.focus();
+		
+		setTimeout(function() {
+			to.caret({start: caret_start, end: caret_start});
+		}, 5)
 	
 	} 
+	
+	function move_caret_right(event) {
+		var el = $(event.target); 
+		
+		if (el.caret().start == el.val().length) {
+			setTimeout(function() {
+				el.next().caret({start: 0, end: 0});
+			}, 5)
+		}		
+	}
+	
+	function move_caret_left(event) {
+		var el = $(event.target); 
+		
+		if (el.caret().start == 0) {
+			setTimeout(function() {
+				to = el.prev();
+				to.caret({start: to.val().length, end: to.val().length});
+			}, 5)
+		}		
+	}
 	
 	
 	$('#save_button').click(function() {
@@ -99,14 +135,10 @@
 				});
 				
 				$(".deadline").datepicker();
+				
 				$(".task").autoResize({
 					maxWidth: 798
 				});
-				$(".deadline").keypress(function(event) {
-  					if ( event.which == 13 ) {
-     					add_new_line($(event.target).parent().attr('task_id'));
-     				}
-     			});
 			}
 		});
 		
@@ -133,6 +165,46 @@
 		add_new_line();
 	});
 	
+	function create_new_line(event) {
+		var task_row = $(event.target).parent();
+		var after = true;
+		
+		if ($(event.target).hasClass('task')) {
+			after = false;
+		}
+		
+		if (after) {
+			task_row.after('<div class="inputs_row" id=new_task>\
+				<input type="text" class="task area" onkeydown="read_keypress(event)" />\
+				<input type="text" size="10" class="employee area" onkeydown="read_keypress(event)" />\
+				<input type="text" size="7" class="deadline area" onkeydown="read_keypress(event)" />\
+			</div>');
+		} else {
+			task_row.before('<div class="inputs_row" id=new_task>\
+				<input type="text" class="task area" onkeydown="read_keypress(event)" />\
+				<input type="text" size="10" class="employee area" onkeydown="read_keypress(event)" />\
+				<input type="text" size="7" class="deadline area" onkeydown="read_keypress(event)" />\
+			</div>');
+		}
+		
+		$.ajax({
+        	url: '/fetch_new_task_id',
+        	cache: false,
+          	success: function(id) {
+          		$('#new_task').attr('task_id', id);
+          		$('#new_task').children().first().focus();
+ 	     		$('#new_task').removeAttr('id');
+          	}
+		});
+		
+		$(".task").autoResize({
+			maxWidth: 798
+		});
+		
+		$(".deadline").datepicker();
+		
+	}
+	
 	function add_new_line(id) {
 		
 		$(".inputs_row[task_id='" + id + "']").after('<div class="inputs_row" id=new_task>\
@@ -156,13 +228,6 @@
 		});
 		
 		$(".deadline").datepicker();
-		
-		$(".deadline").keypress(function(event) {
-			if ( event.which == 13 ) {
-				add_new_line($(event.target).parent().attr('task_id'));
-			}
-		});
-		
 	}
 	
 	$(".task").autoResize({
