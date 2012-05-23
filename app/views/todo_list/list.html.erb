@@ -11,7 +11,42 @@
 
 <script>
 
+	function read_keypress(event) {
+		switch (event.which) {
+			case 38: move_caret_up(event); break;
+			case 40: move_caret_down(event); break;
+		}
+	}
+
 	fetch_tasks();
+	
+	
+	function move_caret_up (event) {
+		task_row = $(event.target).parent();
+		
+		if ($(event.target).hasClass('task')) {
+			task_row.prev().children().first().focus();
+		} else if ($(event.target).hasClass('employee')) {
+			task_row.prev().children().first().next().focus();
+		} else if ($(event.target).hasClass('deadline')) {
+			task_row.prev().children().first().next().next().focus();
+		}
+	
+	} 
+	
+	function move_caret_down (event) {
+		task_row = $(event.target).parent();
+		
+		if ($(event.target).hasClass('task')) {
+			task_row.next().children().first().focus();
+		} else if ($(event.target).hasClass('employee')) {
+			task_row.next().children().first().next().focus();
+		} else if ($(event.target).hasClass('deadline')) {
+			task_row.next().children().first().next().next().focus();
+		}
+	
+	} 
+	
 	
 	$('#save_button').click(function() {
 		
@@ -53,9 +88,9 @@
 				
 				html = '\
 				<div class="inputs_row" task_id=' + this.id + ' >\
-					<input type="text" class="task area" value= "' + this.description + '" />\
-					<input type="text" size="10" class="employee area" value= "' + this.employee + '" />\
-					<input type="text" size="7" class="deadline area" value= "' + formatDate(date) + '" />\
+					<input type="text" class="task area" value= "' + this.description + '" onkeydown="read_keypress(event)"  />\
+					<input type="text" size="10" class="employee area" value= "' + this.employee + '" onkeydown="read_keypress(event)" />\
+					<input type="text" size="7" class="deadline area" value= "' + formatDate(date) + '" onkeydown="read_keypress(event)" />\
 				</div>\
 				';
 			
@@ -64,6 +99,9 @@
 				});
 				
 				$(".deadline").datepicker();
+				$(".task").autoResize({
+					maxWidth: 798
+				});
 				$(".deadline").keypress(function(event) {
   					if ( event.which == 13 ) {
      					add_new_line($(event.target).parent().attr('task_id'));
@@ -98,9 +136,9 @@
 	function add_new_line(id) {
 		
 		$(".inputs_row[task_id='" + id + "']").after('<div class="inputs_row" id=new_task>\
-			<input type="text" class="task area" />\
-			<input type="text" size="10" class="employee area" />\
-			<input type="text" size="7" class="deadline area" />\
+			<input type="text" class="task area" onkeydown="read_keypress(event)" />\
+			<input type="text" size="10" class="employee area" onkeydown="read_keypress(event)" />\
+			<input type="text" size="7" class="deadline area" onkeydown="read_keypress(event)" />\
 		</div>');
 		
 		$.ajax({
